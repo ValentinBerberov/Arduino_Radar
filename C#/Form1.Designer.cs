@@ -6,6 +6,7 @@ partial class Form1
     ///  Required designer variable.
     /// </summary>
     private System.ComponentModel.IContainer components = null;
+    public PictureBox pictureBox;
 
     /// <summary>
     ///  Clean up any resources being used.
@@ -31,7 +32,16 @@ partial class Form1
         components = new System.ComponentModel.Container();
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(1200, 700);
-        Text = "Form1";
+        Text = "Radar";
+
+        pictureBox = new();
+        pictureBox.Location = new Point(0, 0);
+        pictureBox.Width = 1200;
+        pictureBox.Height = 650;
+        pictureBox.Visible = true;
+
+        Controls.Add(pictureBox);
+        
     }
 
     #endregion

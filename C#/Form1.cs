@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Drawing.Drawing2D;
 using System.IO.Ports;
 using System.Threading.Tasks;
 
@@ -15,8 +16,11 @@ public partial class Form1 : Form
     public int x_pos = 0;
     public int y_pos = 0;
     public static volatile int refresh = 0;
-    
 
+
+    Bitmap bmp;
+    Graphics graphics;
+    GraphicsPath path;
     StreamReader streamReader;
     SerialDataReceivedEventHandler SP_DataHandler;
     CancellationTokenSource portSearchTokenSource = new();
@@ -38,7 +42,6 @@ public partial class Form1 : Form
             rects[i].Height = 0;
             rects[i].Width = 0;
         }
-
 
 
         this.Paint += MyForm_Paint;
@@ -75,14 +78,26 @@ public partial class Form1 : Form
         rects[idx].Height = 5;
         rects[idx].Width = 5;
 
+        // Console.WriteLine(Thread.CurrentThread.ManagedThreadId);
 
         ++refresh;
 
-        if (refresh >= 10)
+        if (refresh >= 5)
         {
             refresh = 0;
 
-            this.Refresh();
+            // this.Refresh();
+
+            bmp = new Bitmap(pictureBox.Width, pictureBox.Height, System.Drawing.Imaging.PixelFormat.Format32bppPArgb);
+
+            graphics = Graphics.FromImage(bmp);
+            path = new System.Drawing.Drawing2D.GraphicsPath();
+
+            path.AddRectangles(rects);
+            graphics.FillPath(Brushes.Black, path);
+            graphics.FillRectangle(Brushes.Red, X_offset, Y_offset, 10, 10);
+
+            Refresh();
         }
 
     }
@@ -94,10 +109,12 @@ public partial class Form1 : Form
         Brush brush = Brushes.Black;
         Brush sensorBrush = Brushes.Red;
 
+        // g.FillRectangles(brush, rects);
+        
+        pictureBox.Image = bmp;
+        // pictureBox.BringToFront();
+
         g.FillRectangle(sensorBrush, X_offset, Y_offset, 10, 10);
-
-        g.FillRectangles(brush, rects);
-
     }
 
     private async Task SearchForPort(string serialPort, CancellationToken cancellationToken)
